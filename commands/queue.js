@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, CommandInteraction, EmbedBuilder } from 'discord.js'
+import { SlashCommandBuilder, CommandInteraction } from 'discord.js'
 import { GetQueue, isPlaying } from '../utils/musicManager.js'
 
 export default

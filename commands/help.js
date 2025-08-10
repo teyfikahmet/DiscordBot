@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, CommandInteraction, Client, EmbedBuilder } from 'discord.js'
+import { SlashCommandBuilder, CommandInteraction, EmbedBuilder } from 'discord.js'
 
 export default
 {

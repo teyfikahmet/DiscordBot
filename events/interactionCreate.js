@@ -10,9 +10,6 @@ export const once = false;
 export async function execute(interaction, client) {
 	if (!interaction.isChatInputCommand()) return;
 
-	// interaction.deferReply()
-
-
 	if (!interaction.guild) {
 		return interaction.reply({
 			content: "❌ Bu komut yalnızca sunucularda kullanılabilir.",

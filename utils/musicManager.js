@@ -1,14 +1,15 @@
 
-import { VoiceChannel, TextChannel, Guild, GuildMember, EmbedBuilder, Embed } from "discord.js";
-import { AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel, getVoiceConnection, VoiceConnection } from "@discordjs/voice";
+import { VoiceChannel, TextChannel, Guild, EmbedBuilder} from "discord.js";
+import { AudioPlayerStatus, createAudioPlayer, createAudioResource, joinVoiceChannel} from "@discordjs/voice";
 import ytdl from "@distube/ytdl-core";
 
-const players = new Map(); // guildId -> { connection, player, queue, voice_channel, text_channel, timeover_event }
+const players = new Map(); 
+// guildId -> { connection, player, queue, voice_channel, text_channel, timeover_event }
 // queue = {index, items = [{url, info, member_id}]}
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  */
 export function GetGuildPlayer(guild_id) {
 	return players.get(guild_id)
@@ -16,7 +17,7 @@ export function GetGuildPlayer(guild_id) {
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  * @returns boolen
  */
 export function hasGuildData(guild_id) {
@@ -25,7 +26,7 @@ export function hasGuildData(guild_id) {
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  * @returns 
  */
 export function GetGuildData(guild_id)
@@ -58,7 +59,7 @@ async function onGuildPlayerIdle(guild)
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  */
 export function GetNextItem(guild_id) {
 	const guildData = GetGuildData(guild_id)
@@ -112,7 +113,7 @@ export async function CreateGuildPlayer(guild, voice_channel, text_channel){
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  * @returns boolen
  */
 export function	isPlaying(guild_id)
@@ -128,7 +129,7 @@ export function	isPlaying(guild_id)
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  */
 export function GetQueue(guild_id)
 {
@@ -140,7 +141,7 @@ export function GetQueue(guild_id)
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  * @returns 
  */
 export function ClearQueue(guild_id) {
@@ -153,11 +154,11 @@ export function ClearQueue(guild_id) {
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  * @param {string} url 
  * @param {string} title 
  * @param {object} info 
- * @param {number} member_id
+ * @param {string} member_id
  * @param {boolean} isPlaying
  */
 export function addToQueue(guild_id, url, info, member_id, isPlaying = false)
@@ -178,15 +179,15 @@ export function addToQueue(guild_id, url, info, member_id, isPlaying = false)
 /**
  * 
  * @param {object} video_details 
- * @param {number} user_id 
+ * @param {string} member_id 
  * @returns 
  */
-export function BuildMusicInfoEmbed(info, user_id, listIndex = 1) {
+export function BuildMusicInfoEmbed(info, member_id, listIndex = 1) {
 	const embed = new EmbedBuilder()
 		.setColor("#ccbf07")
 		.setTitle(info.title || "Bilinmeyen Başlık")
 		.setThumbnail(info.thumbnail_url || null)
-		.addFields({ name: '🎧 Talep Eden', value: `<@${user_id}>`})
+		.addFields({ name: '🎧 Talep Eden', value: `<@${member_id}>`})
 		.addFields({ name: 'Liste sırası', value: `#${listIndex}`})
 		.setFooter({text: "Oynatılıyor..."})
 		.setDescription(info.channelTitle || "Bilinmeyen Kanal");
@@ -213,7 +214,7 @@ export async function Play(guild, url, voice_channel, text_channel){
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  * @param {number} index 
  */
 export async function PlayIndex(guild, index) {
@@ -237,7 +238,7 @@ export async function PlayIndex(guild, index) {
 
 /**
  * 
- * @param {number} guildId 
+ * @param {string} guildId 
  * @returns 
  */
 export function stopPlayer(guildId) {
@@ -251,7 +252,7 @@ export function stopPlayer(guildId) {
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  * @returns 
  */
 export function pausePlayer(guild_id)
@@ -269,7 +270,7 @@ export function pausePlayer(guild_id)
 
 /**
  * 
- * @param {number} guild_id 
+ * @param {string} guild_id 
  * @returns 
  */
 export function unPausePlayer(guild_id)

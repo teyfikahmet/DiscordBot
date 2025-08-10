@@ -1,6 +1,5 @@
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js'
 import { addToQueue, isPlaying, Play, BuildMusicInfoEmbed, CreateGuildPlayer, PlayIndex, ClearQueue } from '../utils/musicManager.js'
-import ytdl from '@distube/ytdl-core';
 import { isValidUrl } from '../utils/helper.js';
 import { getPlaylistItems, GetVideoInfo, isPlaylist, isVideo, YoutubeSearch } from '../utils/youtube.js';
 

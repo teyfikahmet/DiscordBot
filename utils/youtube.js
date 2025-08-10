@@ -1,5 +1,4 @@
 import axios from "axios"
-import ytdl from '@distube/ytdl-core';
 import { isValidUrl } from "./helper.js";
 
 /**
