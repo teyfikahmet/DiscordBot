@@ -16,6 +16,10 @@ export default
 			 * @param {CommandInteraction} interaction 
 			 */
 	async execute(interaction){
-		
-	}
+		interaction.reply({
+			content: "Bu özellik henüz aktif değil..",
+			flags: "Ephemeral"
+		})
+	},
+	isDisabled: true,
 }

@@ -5,8 +5,9 @@ export default
 {
 	data: new SlashCommandBuilder()
 		.setName('clear')
-		.setNameLocalizations({Turkish : "temizle"})
-		.setDescription('Çalma listesini temizler.'),
+		.setNameLocalization("tr", "temizle")
+		.setDescription('Clears the playlist.')
+		.setDescriptionLocalization("tr", 'Çalma listesini temizler.'),
 		/**
 		 * 
 		 * @param {CommandInteraction} interaction 

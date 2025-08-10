@@ -7,11 +7,14 @@ import { getPlaylistItems, GetVideoInfo, isPlaylist, isVideo, YoutubeSearch } fr
 export default
 {
 	data: new SlashCommandBuilder()
-		.setName('play').setNameLocalizations({Turkish : "çal"})
-		.setDescription('YouTube linki veye arama ile müzik çalar')
+		.setName('play')
+		.setNameLocalization("tr", "çal")
+		.setDescription('Plays music via YouTube link or search.')
+		.setDescriptionLocalization("tr", "YouTube linki veya arama ile müzik çalar.")
 		.addStringOption(option => option.setName('query')
 			.setNameLocalization("tr", "sorgu")
-			.setDescription('YouTube video linki veya şarkı ara')
+			.setDescription("YouTube video linki gir veya şarkı ara.")
+			.setDescriptionLocalization("tr", 'YouTube video linki gir veya şarkı ara.')
 			.setRequired(true)),
 			/**
 			 * 

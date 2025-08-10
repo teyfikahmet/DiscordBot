@@ -5,13 +5,17 @@ export default
 {
 	data: new SlashCommandBuilder()
 		.setName('pause')
-		.setNameLocalizations({Turkish : "duraklat"})
-		.setDescription('Şarkıyı duraklat'),
+		.setNameLocalization("tr", "duraklat")
+		.setDescription('Pause player')
+		.setDescriptionLocalization("tr", 'Oynatıcıyı duraklat.'),
 		/**
 		 * 
 		 * @param {CommandInteraction} interaction 
 		 */
 	async execute(interaction){
-		return await interaction.reply(pausePlayer(interaction.guild.id) ? "Müzik duraklatıldı." : "Şu an çalan müzik yok veya zaten duraklatılmış.")
+		return await interaction.reply(pausePlayer(interaction.guild.id) ? "Müzik duraklatıldı." : {
+			content: "Şu an çalan müzik yok veya zaten duraklatılmış.",
+			flags: "Ephemeral"
+		})
 	}
 }

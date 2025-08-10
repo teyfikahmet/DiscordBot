@@ -5,8 +5,9 @@ export default
 {
 	data: new SlashCommandBuilder()
 		.setName('queue')
-		.setNameLocalizations({Turkish : "liste"})
-		.setDescription('Şarkı kuyruğunu göster'),
+		.setNameLocalization("tr", "liste")
+		.setDescription('Show playlist.')
+		.setDescriptionLocalization("tr", 'Çalma listesini göster'),
 		/**
 		 * 
 		 * @param {CommandInteraction} interaction 
@@ -14,7 +15,10 @@ export default
 	async execute(interaction){
 		const queue = GetQueue(interaction.guild.id)
 		if(!queue || queue.items.lenght == 0)
-			return await interaction.reply("Listede şarkı yok.")
+			return await interaction.reply({
+				content: "Listede şarkı yok.",
+				flags: "Ephemeral"
+			})
 
 		const currentPlay = queue.index
 		const list = queue.items.map((item, index) => `#${index + 1}: ${item.info.title} ${currentPlay == (index + 1) && isPlaying(interaction.guild.id) ? "**(Oynatılıyor)**" : ""}`).join('\n');

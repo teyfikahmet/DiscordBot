@@ -11,11 +11,14 @@ export const once = false;
  */
 export async function execute(oldState, newState, client) {
 	const botId = client.user.id;
-	if (newState.member.id !== botId) return;
+	
+	if (newState.member.id !== botId) 
+		return;
+
+	
 	if (oldState.channelId && !newState.channelId)
 	{
 		const guildId = newState.guild.id;
 		stopPlayer(guildId)
-		console.log("Bot kanaldan çıktı ve veriler temizlendi...");
 	}
 }

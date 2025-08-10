@@ -23,6 +23,12 @@ for (const file of commandFiles){
 	const filePath = path.join(commandsPath, file);
 	const command = await import(`file://${filePath}`);
 	const data = command["default"]
+	let isDisabled = data?.isDisabled ? data?.isDisabled : false
+	if(isDisabled)
+	{
+		console.log(`Command is disabled : ${data.data.name}`);
+		continue
+	}
 	if ('data' in data && 'execute' in data){
 		client.commands.set(data.data.name, data);
 		commands.push(data["data"].toJSON());
