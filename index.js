@@ -34,7 +34,7 @@ for (const file of commandFiles){
 		commands.push(data["data"].toJSON());
 		continue
 	}
-	onsole.warn(`[UYARI] ${file} geçerli bir komut içermiyor (data & execute eksik).`);
+	console.warn(`[UYARI] ${file} geçerli bir komut içermiyor (data & execute eksik).`);
 }
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
 
