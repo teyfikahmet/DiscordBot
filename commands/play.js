@@ -11,7 +11,7 @@ export default
 		.setDescription('YouTube linki veye arama ile müzik çalar')
 		.addStringOption(option => option.setName('query')
 			.setNameLocalization("tr", "sorgu")
-			.setDescription('YouTube video linki ve ya şarkı ara')
+			.setDescription('YouTube video linki veya şarkı ara')
 			.setRequired(true)),
 			/**
 			 * 
@@ -78,7 +78,7 @@ export default
 
 			if(addedItems.length > 0 && !isPlaying(guild.id))
 				PlayIndex(guild, 0)
-			
+
 			return
 		}
 	}
