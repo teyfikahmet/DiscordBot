@@ -43,5 +43,5 @@ Discord Müzik Botu
    ```
 
 ## Örnek Kullanım
-   `!play Never Gonna Give You Up` komutu ile "Never Gonna Give You Up" şarkısını çalabilirsiniz.
-   `!play <Youtube URL>` komutu ile YouTube'dan bir şarkı çalabilirsiniz.
+   - `!play Never Gonna Give You Up` komutu ile "Never Gonna Give You Up" şarkısını çalabilirsiniz.
+   - `!play <Youtube URL>` komutu ile YouTube'dan bir şarkı çalabilirsiniz.
