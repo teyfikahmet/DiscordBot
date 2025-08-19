@@ -41,3 +41,7 @@ Discord Müzik Botu
    ```bash
    npm start
    ```
+
+## Örnek Kullanım
+   `!play Never Gonna Give You Up` komutu ile "Never Gonna Give You Up" şarkısını çalabilirsiniz.
+   `!play <Youtube URL>` komutu ile YouTube'dan bir şarkı çalabilirsiniz.
