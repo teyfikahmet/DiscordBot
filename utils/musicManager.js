@@ -40,20 +40,34 @@ export function GetGuildData(guild_id)
  */
 async function onGuildPlayerIdle(guild)
 {
-	const guildData = GetGuildData(guild.id)
-	if(!guildData)
-		return
+	try {
+		const guildData = GetGuildData(guild.id)
+		if(!guildData)
+			return
 
-	const queue = GetQueue(guild.id)
-	if(queue)
-	{
-		const nextItem = GetNextItem(guild.id)
-		if(!nextItem)
-			return guildData.text_channel?.send("Listede çalacak başka şarkı kalmadı...")
+		const queue = GetQueue(guild.id)
+		if(queue)
+		{
+			const nextItem = GetNextItem(guild.id)
+			if(!nextItem)
+				return SendMessageToChannel(guildData.guild, guildData.text_channel, "Listede çalacak başka şarkı kalmadı...")
 
-		guildData.queue.index = guildData.queue.index + 1
-		await Play(guild, nextItem.url, guildData.voice_channel, guildData.text_channel)
-		guildData.text_channel?.send({embeds: [BuildMusicInfoEmbed(nextItem.info, nextItem.member_id, guildData.queue.index)]});
+			guildData.queue.index = guildData.queue.index + 1
+			await Play(guild, nextItem.url, guildData.voice_channel, guildData.text_channel)
+			return SendMessageToChannel(guildData.guild, guildData.text_channel, {embeds: [BuildMusicInfoEmbed(nextItem.info, nextItem.member_id, guildData.queue.index)]});
+		}
+	} catch (error) {
+		console.error(error)
+	}
+}
+
+function onGuildPlayerError(player, error) {
+	console.error(`AudioPlayerError: ${error.message}`);
+	
+	try {
+		player.stop();
+	} catch (e) {
+		console.error("Failed to stop player after error:", e);
 	}
 }
 
@@ -88,27 +102,33 @@ export function GetNextItem(guild_id) {
  * @param {TextChannel} text_channel 
  */
 export async function CreateGuildPlayer(guild, voice_channel, text_channel){
-	if (hasGuildData(guild.id)) return
+	try {
+		if (hasGuildData(guild.id)) return
 
-	let guildData = {}
-	let queue = {index : 0, items : []}
-	const connection = joinVoiceChannel({
-		channelId: voice_channel.id,
-		guildId: guild.id,
-		adapterCreator: guild.voiceAdapterCreator,
-	});
-	const player = createAudioPlayer();
+		let guildData = {}
+		let queue = {index : 0, items : []}
+		const connection = joinVoiceChannel({
+			channelId: voice_channel,
+			guildId: guild.id,
+			adapterCreator: guild.voiceAdapterCreator,
+		});
+		const player = createAudioPlayer();
 
-	connection.subscribe(player);
+		connection.subscribe(player);
 
-	player.on(AudioPlayerStatus.Idle, () => onGuildPlayerIdle(guild))
-	
-	guildData = {
-		connection, player, queue, voice_channel, text_channel, timeover_event: null
+		player.on(AudioPlayerStatus.Idle, () => onGuildPlayerIdle(guild))
+		player.on("error", (error) => onGuildPlayerError(player, error))
+		
+		guildData = {
+			connection, player, queue, voice_channel, text_channel, guild, timeover_event: null
+		}
+		players.set(guild.id, guildData)
+
+		return guildData
+	} catch (error) {
+		console.error(error)
+		return null
 	}
-	players.set(guild.id, guildData)
-
-	return guildData
 }
 
 /**
@@ -121,6 +141,9 @@ export function	isPlaying(guild_id)
 	if (!hasGuildData(guild_id))
 		return false
 	
+	if(!players.get(guild_id).player)
+		return false
+
 	if(players.get(guild_id).player.state.status === AudioPlayerStatus.Idle)
 		return false
 
@@ -194,6 +217,10 @@ export function BuildMusicInfoEmbed(info, member_id, listIndex = 1) {
 	return embed
 }
 
+export async function PlayResource(params) {
+	
+}
+
 /**
  * 
  * @param {Guild} guild 
@@ -206,15 +233,16 @@ export async function Play(guild, url, voice_channel, text_channel){
 	if(!data)
 		data = await CreateGuildPlayer(guild, voice_channel, text_channel)
 	
-	const stream = await ytdl(url, { filter: 'audioonly', highWaterMark: 1 << 25 });
+	data.text_channel = text_channel
+	
+	const stream = await ytdl(url, { filter: 'audioonly', quality: "highestaudio", highWaterMark: 1 << 25, dlChunkSize: 0 });
 	const resource = createAudioResource(stream);
-
 	data.player.play(resource)
 }
 
 /**
  * 
- * @param {string} guild_id 
+ * @param {Guild} guild 
  * @param {number} index 
  */
 export async function PlayIndex(guild, index) {
@@ -225,14 +253,15 @@ export async function PlayIndex(guild, index) {
 	if(queue)
 	{
 		const itemLenght = queue.items.length;
+		const textChannel = await guild.channels.fetch(guildData.text_channel.id)
 		if (index >= itemLenght)
-			return guildData.text_channel?.send("Oynatma sırasında hata oluştu.")
+			return SendMessageToChannel(guild, guildData.text_channel, "Oynatma sırasında hata oluştu.")
 		const item = queue.items.at(index)
 		if (!item)
-			return guildData.text_channel?.send("Oynatma sırasında hata oluştu.")
+			return SendMessageToChannel(guild, guildData.text_channel, "Oynatma sırasında hata oluştu.")
 		guildData.queue.index = index + 1
 		await Play(guild, item.url, guildData.voice_channel, guildData.text_channel)
-		guildData.text_channel?.send({embeds: [BuildMusicInfoEmbed(item.info, item.member_id, guildData.queue.index)]});
+		return SendMessageToChannel(guildData.guild, guildData.text_channel, {embeds: [BuildMusicInfoEmbed(item.info, item.member_id, guildData.queue.index)]})
 	}
 }
 
@@ -320,4 +349,24 @@ export async function SkipPlayer(guild)
 
 	await Play(guild, nextItem.url, data.voice_channel, data.text_channel)
 	return [nextItem, data.queue.index]
+}
+
+/**
+ * 
+ * @param {Guild} guild 
+ * @param {number} channelId 
+ */
+async function SendMessageToChannel(guild, channelId, data) {
+	try {
+		const channel = await guild.channels.fetch(channelId);
+		if(!channel)
+		{
+			console.error({text: "Kanal bulanamadıği için Mesaj gönderilemedi", data})
+			return
+		}
+
+		await channel.send(data)
+	} catch (error) {
+		console.log(error.message);
+	}
 }

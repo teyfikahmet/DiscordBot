@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, CommandInteraction } from 'discord.js'
 import { addToQueue, isPlaying, Play, BuildMusicInfoEmbed, CreateGuildPlayer, PlayIndex, ClearQueue } from '../utils/musicManager.js'
 import { isValidUrl } from '../utils/helper.js';
-import { getPlaylistItems, GetVideoInfo, isPlaylist, isVideo, YoutubeSearch } from '../utils/youtube.js';
+import { getPlaylistItems, GetVideoInfo, isPlaylist, isVideo, YoutubeSearch, isShortVideo } from '../utils/youtube.js';
 
 export default
 {
@@ -21,6 +21,7 @@ export default
 			 */
 	async execute(interaction){
 		let query = interaction.options.getString('query');
+
 		if(!query)
 			return interaction.reply("⚠️ Komut hatası.")
 
@@ -38,15 +39,17 @@ export default
 		}
 		const videoId = isVideo(query)
 		const plist = isPlaylist(query)
-		if(videoId)
+		const isShort = isShortVideo(query)
+
+		if(videoId || isShort)
 		{
-			const info = await GetVideoInfo(videoId)
+			const info = await GetVideoInfo(isShort ? isShort : videoId)
 			if(!info)
 				return await interaction.reply("❌ Çalacak bir şey bulunamadı.")
 			
 			if(!isPlaying(guild.id))
 			{
-				await Play(guild, query, member.voice.channel, interaction.channel)
+				await Play(guild, query, member.voice.channel.id, interaction.channel.id)
 				const index = addToQueue(guild.id, query, info, member.id, true)
 				return await interaction.reply({embeds: [BuildMusicInfoEmbed(info, member.id, index)]});
 			}
@@ -59,7 +62,7 @@ export default
 			const items = await getPlaylistItems(plist)
 			if(items && items.length > 0)
 			{
-				await CreateGuildPlayer(guild, member.voice.channel, interaction.channel)
+				await CreateGuildPlayer(guild, member.voice.channel.id, interaction.channel.id)
 				// ClearQueue(interaction.guild.id)
 			}
 			await interaction.reply("🎶 Playlist kuyruğa alındı, ekleniyor...");

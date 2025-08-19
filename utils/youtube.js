@@ -138,6 +138,26 @@ export function isVideo(url)
 
 /**
  * 
+ * @param {string} url 
+ * @returns string
+ */
+export function isShortVideo(url){
+	if(!isValidUrl(url)) 
+		return false
+
+	const parsed = new URL(url)
+	const regex = /shorts\/([a-z0-9_-]{11})/i;
+	if(!regex.test(parsed.pathname))
+		return false
+
+	let m = regex.exec(parsed.pathname)
+	return m[1]
+	
+}
+
+
+/**
+ * 
  * @param {number} video_id 
  * @returns boolen | object
  */
