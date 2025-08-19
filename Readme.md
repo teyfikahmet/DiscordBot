@@ -31,10 +31,10 @@ Discord Müzik Botu
    ```bash
    cp .env.sample .env
    ```
-   `.env` dosyasında `DISCORD_TOKEN` ve diğer gerekli bilgileri doldurun.
+   `.env` dosyasında `TOKEN` ve diğer gerekli bilgileri doldurun.
    Örnek:
    ```
-   DISCORD_TOKEN=your_discord_bot_token
+   TOKEN=your_discord_bot_token
    ```
    Diğer ayarlar için `.env.sample` dosyasına bakabilirsiniz.
 6. Botu başlatın:
